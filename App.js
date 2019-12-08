@@ -1,97 +1,60 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
+import React from 'react';
+import { FlatList, ActivityIndicator, Text, View  } from 'react-native';
+import {getRepos} from './src/api/API'
+import moment from 'moment';
+import Card from './src/components/Card'
 
-import React, {Fragment} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
+export default class App extends React.Component {
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+  constructor(props){
+    super(props);
+    this.state ={ 
+      isLoading: true,
+      page : 1,
+      items : []
+    }
+  }
 
-const App = () => {
-  return (
-    <Fragment>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </Fragment>
-  );
-};
+  componentDidMount(){
 
-const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+    let date = this.getDate30()
+    getRepos(date,this.state.page).then( data => {
+      this.setState({
+        items :[ ...this.state.items, ...data.items],
+        isLoading : false
+      })
+    
 
-export default App;
+    });
+
+  }
+
+  getDate30(){ // funtction to help us get the date one month before the current date.
+    let today = new Date();
+    let lastMonthDate = moment(today).subtract(30,'day').format("YYYY-MM-DD");
+  // we substract 30 days from th current date (-1 month)
+    return   lastMonthDate;
+  }
+
+
+  render(){
+
+    if(this.state.isLoading){
+      return(
+        <View style={{flex: 1, padding: 20}}>
+          <ActivityIndicator/>
+        </View>
+      )
+    }
+
+    return(
+      <View style={{flex: 1, paddingTop:20}}>
+        <FlatList
+          data={this.state.items}
+          keyExtractor={(item,index) => index.toString()}
+          renderItem={({item}) => <Card item = {item}/>}
+        />
+      </View>
+    );
+  }
+}
