@@ -2,7 +2,7 @@ import React from 'react';
 import { FlatList, ActivityIndicator, Text, View  } from 'react-native';
 import {getRepos} from './src/api/API'
 import moment from 'moment';
-import Card from './src/components/Card'
+import CardComponent from './src/components/Card'
 
 export default class App extends React.Component {
 
@@ -48,11 +48,11 @@ export default class App extends React.Component {
     }
 
     return(
-      <View style={{flex: 1, paddingTop:20}}>
+      <View style={{flex: 1, paddingBottom:20}}>
         <FlatList
           data={this.state.items}
           keyExtractor={(item,index) => index.toString()}
-          renderItem={({item}) => <Card item = {item}/>}
+          renderItem={({item}) => <CardComponent item = {item}/>}
         />
       </View>
     );
