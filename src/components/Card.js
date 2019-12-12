@@ -3,8 +3,9 @@ import { View, Text ,StyleSheet, TouchableOpacity} from 'react-native';
 import { Card } from 'react-native-elements';
 import Header from './Header'
 import Footer from './Footer'
+import { connect } from 'react-redux'
 
-export default class CardComponent extends Component{
+class CardComponent extends Component{
     constructor(props) {
         super(props);
         this.state = {
@@ -15,23 +16,19 @@ export default class CardComponent extends Component{
     
       render() {
         return ( 
-         /*  <View>
-              <Text>{this.props.item.name}</Text>
-              <Text>{this.props.item.description }</Text>
-           </View>         */
-           <Card key={this.props.item.id}>
-               <View> 
-                  <TouchableOpacity onPress={()=>{console.warn("pressed !")}}>
-                     <Header name={this.props.item.name} />
-                        <View style={styles.Body}>
-                           <View style ={{width : '100%'}}>
-                              <Text style={styles.Content}>{this.props.item.description}</Text>
-                           </View>
-                        </View> 
-                     <Footer owner={this.props.item.owner} star={this.props.item.stargazers_count}/>
-                  </TouchableOpacity>
-               </View>
-            </Card>        
+         <Card key={this.props.repo.id}>
+            <View> 
+               <TouchableOpacity onPress={()=>{console.warn("pressed !")}}>
+                  <Header name={this.props.repo.name} />
+                     <View style={styles.Body}>
+                        <View style ={{width : '100%'}}>
+                           <Text style={styles.Content}>{this.props.repo.description}</Text>
+                        </View>
+                     </View> 
+                  <Footer owner={this.props.repo.owner} star={this.props.repo.stargazers_count}/>
+               </TouchableOpacity>
+            </View>
+      </Card>        
         );
       }
 }
@@ -39,3 +36,16 @@ export default class CardComponent extends Component{
 const styles = StyleSheet.create({
     
 });
+
+const mapStateToProps = (state) => { 
+   return {
+    
+   }
+ }
+ const mapDispatchToProps = dispatch => {
+   return {
+     
+    
+   }
+ }
+ export default connect(mapStateToProps,mapDispatchToProps)(CardComponent)

@@ -1,33 +1,23 @@
 import React from 'react';
 import { FlatList, ActivityIndicator, Text, View  } from 'react-native';
-import {getRepos} from './src/api/API'
 import moment from 'moment';
-import CardComponent from './src/components/Card'
+import CardComponent from './src/components/Card';
+import { connect } from 'react-redux';
+import { fetchRepos,refreshRepos } from './src/actions/ReposAction';
 
-export default class App extends React.Component {
+class App extends React.Component {
 
   constructor(props){
     super(props);
     this.state ={ 
-      isLoading: true,
       page : 1,
-      items : []
+      date : null
     }
   }
 
   componentDidMount(){
-
-    let date = this.getDate30()
-    getRepos(date,this.state.page).then( data => {
-      this.setState({
-        items :[ ...this.state.items, ...data.items],
-        isLoading : false
-      })
-    
-
-    });
-
-  }
+    this.setState({date : this.getDate30()}, () => this._loadRepos(this.state.date,this.state.page))
+   }
 
   getDate30(){ // funtction to help us get the date one month before the current date.
     let today = new Date();
@@ -36,25 +26,68 @@ export default class App extends React.Component {
     return   lastMonthDate;
   }
 
+  _refresh(date){
+    this.setState({page : 1})
+    this.props.refreshRepos(date)
+  }
 
-  render(){
+  _loadRepos(date,page){
+    this.props.getRepos(date,page)
+  }
 
-    if(this.state.isLoading){
+
+  _spinner(){
+
+    if(this.props.isFetching){
       return(
         <View style={{flex: 1, padding: 20}}>
           <ActivityIndicator/>
         </View>
       )
     }
+  }
+
+  render(){
 
     return(
       <View style={{flex: 1, paddingBottom:20}}>
         <FlatList
-          data={this.state.items}
+          data={this.props.repos}
           keyExtractor={(item,index) => index.toString()}
-          renderItem={({item}) => <CardComponent item = {item}/>}
+          renderItem={({item}) => <CardComponent repo = {item}/>}
+          onEndReachedThreshold={0.1}
+          onEndReached={() => {
+            this.setState({page : this.state.page+1}, () => this._loadRepos(this.state.date,this.state.page))
+              }}
+          refreshing={this.props.isRefreshing}
+          onRefresh={() => this._refresh(this.state.date) }    
+         //ListFooterComponent={this.showLoad()} 
         />
+          
       </View>
+    
     );
+    }
+  }
+
+
+const mapStateToProps = (state) => { 
+  return {
+    repos: state.repositories.repos,
+    isFetching: state.repositories.isFetching,
+    isRefreshing : state.repositories.isRefreshing,
+    error: state.repositories.error
   }
 }
+const mapDispatchToProps = dispatch => {
+  return {
+    getRepos: (date,page) => {
+      dispatch(fetchRepos(date,page))
+    },
+    refreshRepos: (date) => {
+      dispatch(refreshRepos(date))
+    },
+  }
+}
+export default connect(mapStateToProps,mapDispatchToProps)(App)
+
