@@ -38,10 +38,10 @@ class App extends React.Component {
 
   _spinner(){
 
-    if(this.props.isFetching){
+    if(this.props.isFetching && !this.props.isRefreshing){
       return(
         <View style={{flex: 1, padding: 20}}>
-          <ActivityIndicator/>
+          <ActivityIndicator size="large" color="#000000"/>
         </View>
       )
     }
@@ -61,7 +61,7 @@ class App extends React.Component {
               }}
           refreshing={this.props.isRefreshing}
           onRefresh={() => this._refresh(this.state.date) }    
-         //ListFooterComponent={this.showLoad()} 
+         ListFooterComponent={this._spinner()} 
         />
           
       </View>
