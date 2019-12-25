@@ -2,10 +2,11 @@ import React, {Component} from 'react';
 import {View ,StyleSheet, Text} from 'react-native';
 import { Avatar } from 'react-native-elements';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import * as color from '../colors/Colors' 
+import * as color from '../../colors/Colors';
+import { connect } from 'react-redux'
 
 
-export default class Footer extends Component{
+class Footer extends Component{
     constructor(props) {
         super(props);
         this.state = {
@@ -18,11 +19,11 @@ export default class Footer extends Component{
             <View style={styles.Footer}>
               <View style={styles.box}>
                 <Avatar size={20} rounded source = {{uri : this.props.owner.avatar_url}} />
-                <Text style={{marginLeft : 4}}>{this.props.owner.login}</Text>
+                <Text style={{marginLeft : 4, color : this.props.theme.text_primary}}>{this.props.owner.login}</Text>
               </View>
               <View style={styles.box}>
                 <FontAwesome name='star' color={color.STAR_COLOR} size={20}/>
-                <Text style={{marginLeft : 4}}>{this.props.star}</Text>
+                <Text style={{marginLeft : 4, color : this.props.theme.text_primary}}>{this.props.star}</Text>
               </View>
             </View>
         );
@@ -41,3 +42,18 @@ const styles = StyleSheet.create({
     justifyContent : "flex-start"
    }
 });
+
+
+const mapStateToProps = (state) => { 
+  return {
+   theme: state.themes.theme
+
+  }
+}
+const mapDispatchToProps = dispatch => {
+  return {
+    
+   
+  }
+}
+export default connect(mapStateToProps,mapDispatchToProps)(Footer)

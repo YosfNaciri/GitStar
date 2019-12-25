@@ -1,4 +1,7 @@
-import { REFRESH_REPOS,REFRESH_REPOS_SUCCESS,REFRESH_REPOS_FAILURE,FETCHING_REPOS,FETCHING_REPOS_SUCCESS,FETCHING_REPOS_FAILURE   } from '../../actions/Types'
+import { REFRESH_REPOS,REFRESH_REPOS_SUCCESS,REFRESH_REPOS_FAILURE,FETCHING_REPOS,FETCHING_REPOS_SUCCESS,FETCHING_REPOS_FAILURE   } from '../../actions/ReposActions/Types'
+
+//the theme reducer where we act based on the action types to specify our "Globale app variables" if we can call the so ^^.
+//
 
 const INITIAL_STATE = { 
     repos : [] ,
